@@ -1,0 +1,36 @@
+name: Deploy FastAPI to Azure App Service (F1)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Optional: add tests here (e.g., pytest)
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          # TODO: Replace with your actual App Service name from the Azure portal
+          app-name: "<YOUR_APP_SERVICE_NAME>"
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: .
